@@ -193,6 +193,9 @@ MonoBehaviour:
   swordPrefab: {fileID: 271385232}
   _inputs: {fileID: 2138239324}
   _speed: 100
+  _walkingSpeed: 100
+  _runModificator: 1.5
+  _crouchModificator: 0.75
   _jumpForce: 5
   _mouseSens: 10
 --- !u!1 &271385232
@@ -1116,10 +1119,14 @@ MonoBehaviour:
   look: {x: 0, y: 0}
   attack: 0
   jump: 0
+  crouch: 0
   attackEvent:
     m_PersistentCalls:
       m_Calls: []
   jumpEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  crouchEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &2138239325
@@ -1164,6 +1171,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 2825a176-a879-4971-a898-1c50347f4b78
     m_ActionName: Player/Jump[/Keyboard/space]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 8b316bb6-43c0-43c4-b87f-66c2bcead29a
+    m_ActionName: Player/Crouch[/Keyboard/ctrl]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 939fd6f3-a1f1-40d7-a982-1537be7d5564
+    m_ActionName: Player/New action
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

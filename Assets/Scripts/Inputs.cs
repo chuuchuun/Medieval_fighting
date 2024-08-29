@@ -45,4 +45,9 @@ public class Inputs : MonoBehaviour
         crouch = value.isPressed;
         crouchEvent?.Invoke();
     }
+
+    public void OnRun()
+    {
+
+    }
 }

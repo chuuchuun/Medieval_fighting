@@ -9,7 +9,13 @@ public class Player : MonoBehaviour
     public GameObject swordPrefab; 
 
     [SerializeField] private Inputs _inputs;
-    [SerializeField] private float _speed = 100;
+    [SerializeField] private float _speed;
+
+    [SerializeField] private float _walkingSpeed = 100f;
+
+    [SerializeField] private float _runModificator = 1.5f;
+    [SerializeField] private float _crouchModificator = 0.75f;
+
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _mouseSens;
 
@@ -20,10 +26,12 @@ public class Player : MonoBehaviour
     private float _xRotation = 0;
     private float _yRotation = 0;
     private bool _isCrouching = false;
+    private bool _isRunning = false;
 
     private string _speedID = "Speed";
     private string _strongAttackID = "StrongAttack";
     private string _crouchID = "Crouch";
+    private string _runID = "Run";
 
     private void Awake()
     {
@@ -34,6 +42,9 @@ public class Player : MonoBehaviour
         _inputs.attackEvent.AddListener(OnAttack);
         _inputs.jumpEvent.AddListener(OnJump);
         _inputs.crouchEvent.AddListener(OnCrouch);
+
+        _speed = _walkingSpeed;
+
     }
     void Start()
     {
@@ -45,6 +56,7 @@ public class Player : MonoBehaviour
     {
         OnMove();
         OnLook();
+        OnRun();
 
         if (_animator.GetBool(_strongAttackID) && !_inputs.attack)
         {
@@ -56,6 +68,7 @@ public class Player : MonoBehaviour
     {
 
         _rb.AddRelativeForce(new Vector3(_inputs.move.x, 0, _inputs.move.y) * _speed * Time.deltaTime);
+        print(_inputs.move.x);
         _animator.SetFloat(_speedID, _inputs.move.magnitude);
     }
     private void OnLook()
@@ -71,6 +84,7 @@ public class Player : MonoBehaviour
 
     private void OnJump()
     {
+        _isCrouching = false;
         _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
     }
 
@@ -86,15 +100,33 @@ public class Player : MonoBehaviour
         if (!_isCrouching)
         {
             _isCrouching = true;
-            _speed *= 0.75f;
+            _speed = _walkingSpeed * _crouchModificator;
             print("crouching");
         }
         else
         {
             _isCrouching = false;
-            _speed /= 0.75f;
+            _speed = _walkingSpeed;
             print("standing up");
         }
         _animator.SetBool(_crouchID, _isCrouching);
+    }
+    private void OnRun()
+    {
+        if (!_isCrouching)
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                print("running");
+                _speed = _walkingSpeed * _runModificator;
+                _isRunning = true;
+            }
+            else if(Input.GetKeyUp(KeyCode.LeftShift)) {
+                print("walking again");
+                _speed = _walkingSpeed;
+                _isRunning = false;
+            }
+        }
+        _animator.SetBool(_runID, _isRunning);
     }
 }
