@@ -37,6 +37,7 @@ public class Player : MonoBehaviour
 
     private string _speedID = "Speed";
     private string _strongAttackID = "StrongAttack";
+    private int _attackID;
     private string _crouchID = "Crouch";
     private string _runID = "Run";
     private string _jumpID = "Jump";
@@ -51,7 +52,12 @@ public class Player : MonoBehaviour
         _camera = Camera.main;
         _animator = GetComponent<Animator>();
 
+        _attackID = Animator.StringToHash("Attack");
+
+
+        _inputs.strongAttackEvent.AddListener(OnStrongAttack);
         _inputs.attackEvent.AddListener(OnAttack);
+
         _inputs.jumpEvent.AddListener(OnJump);
         _inputs.crouchEvent.AddListener(OnCrouch);
 
@@ -75,9 +81,14 @@ public class Player : MonoBehaviour
         OnLook();
         //OnRun();
 
-        if (_animator.GetBool(_strongAttackID) && !_inputs.attack)
+        if (_animator.GetBool(_strongAttackID) && !_inputs.strongAttack)
         {
             _animator.SetBool(_strongAttackID, false);
+        }
+
+        if (_animator.GetBool(_attackID) && !_inputs.attack)
+        {
+            _animator.SetBool(_attackID, false);
         }
 
         CheckGround();
@@ -145,13 +156,19 @@ private void OnMove()
         _isJumping = false;
     }
 
-    private void OnAttack()
+    private void OnStrongAttack()
     {
         swordPrefab.SetActive(true);
         _animator.SetBool(_strongAttackID, true);
-        print("shoot");
+        print("strong shoot");
     }
-
+    private void OnAttack()
+    {
+        swordPrefab.SetActive(true);
+        _animator.SetBool(_attackID, true);
+        print("shoot");
+       
+    }
     private void OnCrouch()
     {
         if (!_isCrouching)

@@ -301,14 +301,14 @@ MonoBehaviour:
   _walkingSpeed: 100
   _runModificator: 1.5
   _crouchModificator: 0.75
-  _jumpForce: 5
+  _jumpForce: 4
   _mouseSens: 10
   groundCheckTransform: {fileID: 662274387}
   groundCheckRadius: 0.2
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
-  jumpDelay: 2
+  jumpDelay: 5
 --- !u!4 &170164132 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: b7a041353c3cffa42a83ca99ad4b812c,
@@ -1285,6 +1285,7 @@ MonoBehaviour:
   attack: 0
   jump: 0
   crouch: 0
+  run: 0
   attackEvent:
     m_PersistentCalls:
       m_Calls: []
@@ -1292,6 +1293,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   crouchEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  startRunEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  stopRunEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &2138239325

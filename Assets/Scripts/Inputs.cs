@@ -7,11 +7,13 @@ public class Inputs : MonoBehaviour
     public Vector2 move;
     public Vector2 look;
     public bool attack;
+    public bool strongAttack;
     public bool jump;
     public bool crouch;
     public bool run;
 
     public UnityEvent attackEvent;
+    public UnityEvent strongAttackEvent;
     public UnityEvent jumpEvent;
     public UnityEvent crouchEvent;
     public UnityEvent startRunEvent;
@@ -36,6 +38,18 @@ public class Inputs : MonoBehaviour
     {
         attack = false;
         attackEvent?.Invoke();
+    }
+
+    public void OnStrongAttack(InputValue value)
+    {
+        strongAttack = value.isPressed;
+        strongAttackEvent?.Invoke();
+    }
+
+    public void OnStrongAttackReleased()
+    {
+        strongAttack = false;
+        strongAttackEvent?.Invoke();
     }
     public void OnJump(InputValue value)
     {
