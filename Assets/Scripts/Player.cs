@@ -35,12 +35,12 @@ public class Player : MonoBehaviour
 
     private bool _isGrounded = true;
 
-    private string _speedID = "Speed";
-    private string _strongAttackID = "StrongAttack";
+    private int _speedID;
+    private int _strongAttackID;
     private int _attackID;
-    private string _crouchID = "Crouch";
-    private string _runID = "Run";
-    private string _jumpID = "Jump";
+    private int _crouchID;
+    private int _runID;
+    private int _jumpID;
 
     public float groundCheckRadius = 0.2f; // Radius of the ground check collider
     public LayerMask groundLayer;
@@ -52,22 +52,21 @@ public class Player : MonoBehaviour
         _camera = Camera.main;
         _animator = GetComponent<Animator>();
 
+        _speedID = Animator.StringToHash("Speed");
+        _strongAttackID = Animator.StringToHash("StrongAttack");
         _attackID = Animator.StringToHash("Attack");
-
+        _crouchID = Animator.StringToHash("Crouch");
+        _runID = Animator.StringToHash("Run");
+        _jumpID = Animator.StringToHash("Jump");
 
         _inputs.strongAttackEvent.AddListener(OnStrongAttack);
         _inputs.attackEvent.AddListener(OnAttack);
-
         _inputs.jumpEvent.AddListener(OnJump);
         _inputs.crouchEvent.AddListener(OnCrouch);
-
-
         _inputs.startRunEvent.AddListener(OnRunStart);
         _inputs.stopRunEvent.AddListener(OnRunStop);
 
         _speed = _walkingSpeed;
-
-
     }
     void Start()
     {
