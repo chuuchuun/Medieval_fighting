@@ -19,19 +19,31 @@ public class Player : MonoBehaviour
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _mouseSens;
 
+    [SerializeField] private Transform groundCheckTransform; // Reference to ground check position
+
+
     private Rigidbody _rb;
     private Camera _camera;
     private Animator _animator;
 
     private float _xRotation = 0;
     private float _yRotation = 0;
+
     private bool _isCrouching = false;
     private bool _isRunning = false;
+    private bool _isJumping = false;
+
+    private bool _isGrounded = true;
 
     private string _speedID = "Speed";
     private string _strongAttackID = "StrongAttack";
     private string _crouchID = "Crouch";
     private string _runID = "Run";
+    private string _jumpID = "Jump";
+
+    public float groundCheckRadius = 0.2f; // Radius of the ground check collider
+    public LayerMask groundLayer;
+    public float jumpDelay = 1.0f;
 
     private void Awake()
     {
@@ -43,7 +55,10 @@ public class Player : MonoBehaviour
         _inputs.jumpEvent.AddListener(OnJump);
         _inputs.crouchEvent.AddListener(OnCrouch);
 
+
+
         _speed = _walkingSpeed;
+
 
     }
     void Start()
@@ -62,13 +77,35 @@ public class Player : MonoBehaviour
         {
             _animator.SetBool(_strongAttackID, false);
         }
+        CheckGround();
+        
+        _animator.SetBool(_jumpID, _isJumping);
+        print(_animator.GetBool(_jumpID));
     }
 
-    private void OnMove()
+    private void CheckGround()
+    {
+        _isGrounded = Physics.CheckSphere(groundCheckTransform.position, groundCheckRadius, groundLayer);
+
+        // Debug to visualize the ground check
+        Debug.DrawRay(groundCheckTransform.position, Vector3.down * groundCheckRadius, Color.red);
+
+        // Reset jump status if grounded
+        if (_isGrounded)
+        {
+            _isJumping = false;
+            //_animator.SetBool(_jumpID, false);
+        }
+        else
+        {
+            _isJumping = true;
+        }
+    }
+
+private void OnMove()
     {
 
         _rb.AddRelativeForce(new Vector3(_inputs.move.x, 0, _inputs.move.y) * _speed * Time.deltaTime);
-        print(_inputs.move.x);
         _animator.SetFloat(_speedID, _inputs.move.magnitude);
     }
     private void OnLook()
@@ -82,10 +119,31 @@ public class Player : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, _yRotation, 0);
     }
 
+
+
+    // Coroutine to handle the jump with a delay
     private void OnJump()
     {
-        _isCrouching = false;
-        _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+        if (!_isJumping && _isGrounded)
+        {
+            StartCoroutine(JumpWithDelay());
+        }
+    }
+
+    // Coroutine to handle the jump with a delay
+    private IEnumerator JumpWithDelay()
+    {
+        _isJumping = true;
+        _animator.SetBool(_jumpID, true); // Start the jump animation while on the ground
+
+        // Wait for the specified delay (or wait until the animation reaches a certain point)
+        yield return new WaitForSeconds(jumpDelay);
+
+        _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse); // Apply the jump force after the animation starts
+
+        // You can reset the animator boolean after jumping or let the animation handle it
+        yield return new WaitForSeconds(0.1f); // Optional: Wait briefly before resetting
+        _animator.SetBool(_jumpID, false);
     }
 
     private void OnAttack()

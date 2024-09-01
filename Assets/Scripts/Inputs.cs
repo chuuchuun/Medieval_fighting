@@ -9,10 +9,13 @@ public class Inputs : MonoBehaviour
     public bool attack;
     public bool jump;
     public bool crouch;
+    public bool run;
 
     public UnityEvent attackEvent;
     public UnityEvent jumpEvent;
     public UnityEvent crouchEvent;
+    public UnityEvent startRunEvent;
+    public UnityEvent stopRunEvent;
 
     public void OnMove(InputValue value)
     {
@@ -46,8 +49,17 @@ public class Inputs : MonoBehaviour
         crouchEvent?.Invoke();
     }
 
-    public void OnRun()
+    public void OnRun(InputAction.CallbackContext context)
     {
-
+        //if (context.performed)
+        //{
+          //  run = true;
+            //startRunEvent?.Invoke();
+        //}
+        //else if(context.canceled)
+        //{
+          //  run = false;
+            //stopRunEvent?.Invoke();
+        //}
     }
 }
