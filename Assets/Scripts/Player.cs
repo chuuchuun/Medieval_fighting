@@ -56,6 +56,8 @@ public class Player : MonoBehaviour
         _inputs.crouchEvent.AddListener(OnCrouch);
 
 
+        _inputs.startRunEvent.AddListener(OnRunStart);
+        _inputs.stopRunEvent.AddListener(OnRunStop);
 
         _speed = _walkingSpeed;
 
@@ -71,16 +73,17 @@ public class Player : MonoBehaviour
     {
         OnMove();
         OnLook();
-        OnRun();
+        //OnRun();
 
         if (_animator.GetBool(_strongAttackID) && !_inputs.attack)
         {
             _animator.SetBool(_strongAttackID, false);
         }
+
         CheckGround();
         
         _animator.SetBool(_jumpID, _isJumping);
-        print(_animator.GetBool(_jumpID));
+        //print(_animator.GetBool(_jumpID));
     }
 
     private void CheckGround()
@@ -90,16 +93,7 @@ public class Player : MonoBehaviour
         // Debug to visualize the ground check
         Debug.DrawRay(groundCheckTransform.position, Vector3.down * groundCheckRadius, Color.red);
 
-        // Reset jump status if grounded
-        if (_isGrounded)
-        {
-            _isJumping = false;
-            //_animator.SetBool(_jumpID, false);
-        }
-        else
-        {
-            _isJumping = true;
-        }
+
     }
 
 private void OnMove()
@@ -133,17 +127,22 @@ private void OnMove()
     // Coroutine to handle the jump with a delay
     private IEnumerator JumpWithDelay()
     {
-        _isJumping = true;
+        
         _animator.SetBool(_jumpID, true); // Start the jump animation while on the ground
+        _isJumping = true;
+        print("jump started");
 
-        // Wait for the specified delay (or wait until the animation reaches a certain point)
-        yield return new WaitForSeconds(jumpDelay);
+        yield return new WaitForSeconds(0.5f);
 
+
+        print("applying force");
         _rb.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse); // Apply the jump force after the animation starts
 
         // You can reset the animator boolean after jumping or let the animation handle it
         yield return new WaitForSeconds(0.1f); // Optional: Wait briefly before resetting
+        print("jump ended");
         _animator.SetBool(_jumpID, false);
+        _isJumping = false;
     }
 
     private void OnAttack()
@@ -185,6 +184,27 @@ private void OnMove()
                 _isRunning = false;
             }
         }
+        _animator.SetBool(_runID, _isRunning);
+    }
+
+    private void OnRunStart()
+    {
+        if (!_isCrouching)
+        {
+
+            print("running");
+            _speed = _walkingSpeed * _runModificator;
+            _isRunning = true;
+
+        }
+        _animator.SetBool(_runID, _isRunning);
+    }
+
+    private void OnRunStop()
+    {
+        print("walking again");
+        _speed = _walkingSpeed;
+        _isRunning = false;
         _animator.SetBool(_runID, _isRunning);
     }
 }

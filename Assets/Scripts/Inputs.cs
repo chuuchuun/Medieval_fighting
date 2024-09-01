@@ -49,17 +49,17 @@ public class Inputs : MonoBehaviour
         crouchEvent?.Invoke();
     }
 
-    public void OnRun(InputAction.CallbackContext context)
+    public void OnRun(InputValue value)
     {
-        //if (context.performed)
-        //{
-          //  run = true;
-            //startRunEvent?.Invoke();
-        //}
-        //else if(context.canceled)
-        //{
-          //  run = false;
-            //stopRunEvent?.Invoke();
-        //}
+        if (value.isPressed)
+        {
+            run = true;
+            startRunEvent?.Invoke();
+        }
+        else
+        {
+            run = false;
+            stopRunEvent?.Invoke();
+        }
     }
 }
