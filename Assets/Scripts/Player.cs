@@ -156,19 +156,71 @@ private void OnMove()
         _isJumping = false;
     }
 
-    private void OnStrongAttack()
-    {
-        swordPrefab.SetActive(true);
-        _animator.SetBool(_strongAttackID, true);
-        print("strong shoot");
-    }
     private void OnAttack()
     {
         swordPrefab.SetActive(true);
-        _animator.SetBool(_attackID, true);
-        print("shoot");
-       
+
+        // Determine the current movement state
+        if (_isRunning)
+        {
+            // Set the animator for a running attack animation
+            _animator.SetBool(_attackID, true);
+            _animator.SetBool(_runID, true);
+            _animator.SetFloat(_speedID, _inputs.move.magnitude); // Set speed to a higher value to trigger running animations
+            Debug.Log("Running Attack");
+        }
+        else if (_inputs.move.magnitude > 0) // Check if player is walking
+        {
+            // Set the animator for a walking attack animation
+            _animator.SetBool(_attackID, true);
+            _animator.SetBool(_runID, false);
+            _animator.SetFloat(_speedID, _inputs.move.magnitude); // Set speed to a lower value to trigger walking animations
+            Debug.Log("Walking Attack");
+        }
+        else
+        {
+            // Set the animator for an idle attack animation
+            _animator.SetBool(_attackID, true);
+            _animator.SetBool(_runID, false);
+            _animator.SetFloat(_speedID, 0); // Set speed to 0 to trigger idle animations
+            Debug.Log("Idle Attack");
+        }
+
+        Debug.Log("Attack performed");
     }
+
+    private void OnStrongAttack()
+    {
+        swordPrefab.SetActive(true);
+
+        if (_isRunning)
+        {
+            // Set the animator for a running strong attack animation
+            _animator.SetBool(_strongAttackID, true);
+            _animator.SetBool(_runID, true);
+            _animator.SetFloat(_speedID, _inputs.move.magnitude); // Set speed to a higher value to trigger running animations
+            Debug.Log("Running Strong Attack");
+        }
+        else if (_inputs.move.magnitude > 0) // Check if player is walking
+        {
+            // Set the animator for a walking strong attack animation
+            _animator.SetBool(_strongAttackID, true);
+            _animator.SetBool(_runID, false);
+            _animator.SetFloat(_speedID, _inputs.move.magnitude); // Set speed to a lower value to trigger walking animations
+            Debug.Log("Walking Strong Attack");
+        }
+        else
+        {
+            // Set the animator for an idle strong attack animation
+            _animator.SetBool(_strongAttackID, true);
+            _animator.SetBool(_runID, false);
+            _animator.SetFloat(_speedID, 0); // Set speed to 0 to trigger idle animations
+            Debug.Log("Idle Strong Attack");
+        }
+
+        Debug.Log("Strong attack performed");
+    }
+
     private void OnCrouch()
     {
         if (!_isCrouching)
@@ -208,7 +260,6 @@ private void OnMove()
     {
         if (!_isCrouching)
         {
-
             print("running");
             _speed = _walkingSpeed * _runModificator;
             _isRunning = true;

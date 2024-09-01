@@ -29,7 +29,7 @@
                     "id": "d5e49175-dd5d-4a2f-aba0-82287cc81e61",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "initialStateCheck": false
                 },
                 {
@@ -65,7 +65,7 @@
                     "id": "85893483-8b0b-4e97-94a2-85519e69dbd7",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "initialStateCheck": false
                 }
             ],
@@ -337,7 +337,7 @@
                 {
                     "name": "",
                     "id": "77bd6fe3-4f3b-47de-81a5-110d5c845ec0",
-                    "path": "",
+                    "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
@@ -352,6 +352,17 @@
                     "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": "Mouse and keyboard",
+                    "action": "StrongAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "753aef67-ccaf-4048-aae9-83fcd25fe190",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
                     "action": "StrongAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
