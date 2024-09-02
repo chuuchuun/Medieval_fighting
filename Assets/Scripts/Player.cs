@@ -85,10 +85,10 @@ public class Player : MonoBehaviour
           //  _animator.SetBool(_strongAttackID, false);
         //}
 
-        if (_animator.GetBool(_attackID) && !_inputs.attack)
-        {
-            _animator.SetBool(_attackID, false);
-        }
+        //if (_animator.GetBool(_attackID) && !_inputs.attack)
+        //{
+          //  _animator.SetBool(_attackID, false);
+        //}
 
         CheckGround();
         //swordPrefab.GetComponent<Collider>().enabled = _isAttacking;
@@ -159,12 +159,16 @@ private void OnMove()
     private void OnAttack()
     {
         //_isAttacking = true;
-
+        if (!_isAttacking)
+        {
+            _isAttacking = true;
+            _animator.SetTrigger(_attackID);
+        }
         // Determine the current movement state
         if (_isRunning)
         {
             // Set the animator for a running attack animation
-            _animator.SetBool(_attackID, true);
+            //_animator.SetBool(_attackID, true);
             _animator.SetBool(_runID, true);
             _animator.SetFloat(_speedID, _inputs.move.magnitude); // Set speed to a higher value to trigger running animations
             Debug.Log("Running Attack");
@@ -172,7 +176,7 @@ private void OnMove()
         else if (_inputs.move.magnitude > 0) // Check if player is walking
         {
             // Set the animator for a walking attack animation
-            _animator.SetBool(_attackID, true);
+            //_animator.SetBool(_attackID, true);
             _animator.SetBool(_runID, false);
             _animator.SetFloat(_speedID, _inputs.move.magnitude); // Set speed to a lower value to trigger walking animations
             Debug.Log("Walking Attack");
@@ -180,7 +184,7 @@ private void OnMove()
         else
         {
             // Set the animator for an idle attack animation
-            _animator.SetBool(_attackID, true);
+            //_animator.SetBool(_attackID, true);
             _animator.SetBool(_runID, false);
             _animator.SetFloat(_speedID, 0); // Set speed to 0 to trigger idle animations
             Debug.Log("Idle Attack");

@@ -565,24 +565,6 @@ MonoBehaviour:
   CameraRadius: 0.2
   DampingIntoCollision: 0
   DampingFromCollision: 2
---- !u!1 &744191213 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -5770850338934133332, guid: 7d8cbbf4fb3746547b19c00ed5d68caa,
-    type: 3}
-  m_PrefabInstance: {fileID: 1638734797}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &744191217
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744191213}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc48ca09045285147b64eddca6295b79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &807647005
 GameObject:
   m_ObjectHideFlags: 0
@@ -994,7 +976,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.21671359
   m_Height: 0.71105415
@@ -1103,10 +1085,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2058009779}
-    - targetCorrespondingSourceObject: {fileID: -5770850338934133332, guid: 7d8cbbf4fb3746547b19c00ed5d68caa,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 744191217}
     - targetCorrespondingSourceObject: {fileID: 201253961220923684, guid: 7d8cbbf4fb3746547b19c00ed5d68caa,
         type: 3}
       insertIndex: -1
@@ -1213,6 +1191,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 170164127}
+  weapon: {fileID: 1444262794}
   runningDistance: 0
   attackDistance: 0
   triggerDistance: 0

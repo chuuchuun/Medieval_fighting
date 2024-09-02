@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public abstract class EnemyController : MonoBehaviour
 {
     public GameObject target;
-
+    public GameObject weapon;
     [SerializeField] private float runningDistance;
     [SerializeField] private float attackDistance;
     [SerializeField] private float triggerDistance;
@@ -105,6 +105,7 @@ public abstract class EnemyController : MonoBehaviour
     {
         if (stamina >= attackStaminaCost)
         {
+            animator.SetTrigger(_attackID);
             stamina -= attackStaminaCost;
             animator.SetFloat(_speedID, 0f);
             _isAttacking = true;
@@ -128,7 +129,6 @@ public abstract class EnemyController : MonoBehaviour
         if (_isAlive)
         {
             HeadForDestination();
-            animator.SetBool(_attackID, _isAttacking);
             if (stamina < maxStamina)
             {
                 stamina += staminaRecoveryRate * Time.deltaTime;
@@ -166,7 +166,17 @@ public abstract class EnemyController : MonoBehaviour
         animator.SetBool(_deathID, true);
         print("Enemy died");
     }
+    public void EnableWeaponCollider()
+    {
+        weapon.gameObject.GetComponent<Collider>().enabled = true;
+        print("enabled");
+    }
 
+    public void DisableWeaponCollider()
+    {
+        print("disabled");
+        weapon.gameObject.GetComponent<Collider>().enabled = false;
+    }
     public abstract float GetRunningDistance();
     public abstract float GetAttackDistance();
     public abstract float GetTriggerDistance();

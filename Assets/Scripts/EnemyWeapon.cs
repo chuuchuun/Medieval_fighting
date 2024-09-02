@@ -25,4 +25,7 @@ public abstract class EnemyWeapon : MonoBehaviour
     // Abstract methods to enforce implementation in subclasses
     public abstract float GetDamage();
     public abstract string GetName();
+
+    
+
 }
