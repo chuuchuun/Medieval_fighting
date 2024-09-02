@@ -274,4 +274,17 @@ private void OnMove()
         _isRunning = false;
         _animator.SetBool(_runID, _isRunning);
     }
+
+    public bool GetBlocking()
+    {
+        return false;
+    }
+
+    public void ReceiveDamage(float damage, string weaponName)
+    {
+        print("took damage " + damage + "by " + weaponName);
+    }
+
+    
+
 }
