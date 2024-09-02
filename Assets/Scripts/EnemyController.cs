@@ -15,7 +15,6 @@ public class EnemyController : MonoBehaviour
     public float _runningModificator = 1.5f;
 
     private NavMeshAgent agent;
-
     private Animator animator;
 
     private int _speedID;
@@ -25,8 +24,15 @@ public class EnemyController : MonoBehaviour
 
     private float _speed;
     private bool _isAttacking = false;
-    
-    // Start is called before the first frame update
+
+    // Stamina system variables
+    public float stamina = 100f; // Initial stamina
+    public float maxStamina = 100f; // Maximum stamina
+    public float staminaRecoveryRate = 10f; // Stamina recovery per second
+    public float attackStaminaCost = 20f; // Stamina cost per attack
+    public float attackCooldown = 2f; // Cooldown time after an attack in seconds
+
+    private bool canAttack = true; // Determines if the enemy can attack
 
     private void Awake()
     {
@@ -35,11 +41,11 @@ public class EnemyController : MonoBehaviour
 
         _speedID = Animator.StringToHash("Speed");
         _attackID = Animator.StringToHash("Attack");
-
     }
+
     void Start()
     {
-
+        // Initialize any needed setup here
     }
 
     private void HeadForDestination()
@@ -47,13 +53,14 @@ public class EnemyController : MonoBehaviour
         Vector3 destination = target.transform.position;
         float distance = Vector3.Distance(agent.transform.position, destination);
         _speed = walkingSpeed;
-        if(distance < triggerDistance)
+
+        if (distance < triggerDistance)
         {
             if (distance > runningDistance)
             {
                 Run();
             }
-            else if (distance <= attackDistance)
+            else if (distance <= attackDistance && canAttack)
             {
                 Attack();
             }
@@ -69,7 +76,6 @@ public class EnemyController : MonoBehaviour
             animator.SetFloat(_speedID, 0f);
             _isAttacking = false;
         }
-        
     }
 
     private void Run()
@@ -81,14 +87,40 @@ public class EnemyController : MonoBehaviour
 
     private void Attack()
     {
-        animator.SetFloat(_speedID, 0f);
-        _isAttacking = true;
+        if (stamina >= attackStaminaCost)
+        {
+            // Perform attack
+            stamina -= attackStaminaCost; // Deduct stamina
+            animator.SetFloat(_speedID, 0f);
+            _isAttacking = true;
+            canAttack = false; // Set cooldown for next attack
+            StartCoroutine(AttackCooldown());
+        }
+        else
+        {
+            // Not enough stamina to attack
+            _isAttacking = false;
+        }
     }
-    // Update is called once per frame
+
+    private IEnumerator AttackCooldown()
+    {
+        yield return new WaitForSeconds(attackCooldown);
+        canAttack = true;
+    }
+
     void Update()
     {
         HeadForDestination();
         animator.SetBool(_attackID, _isAttacking);
 
+        // Recover stamina over time
+        if (stamina < maxStamina)
+        {
+            stamina += staminaRecoveryRate * Time.deltaTime;
+        }
+
+        // Ensure stamina does not exceed maxStamina
+        stamina = Mathf.Clamp(stamina, 0, maxStamina);
     }
 }
