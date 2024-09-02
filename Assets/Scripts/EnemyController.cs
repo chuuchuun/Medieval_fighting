@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyController : MonoBehaviour
+public abstract class EnemyController : MonoBehaviour
 {
     public GameObject target;
 
-    public float runningDistance = 10.0f;
-    public float attackDistance = 2f;
-    public float triggerDistance = 20.0f;
+    [SerializeField] private float runningDistance;
+    [SerializeField] private float attackDistance;
+    [SerializeField] private float triggerDistance;
 
-    public float walkingSpeed = 2f;
-    public float _runningModificator = 1.5f;
+    [SerializeField] private float walkingSpeed;
+    [SerializeField] private float _runningModificator = 1.5f;
+
+    [SerializeField] private int health;
 
     private NavMeshAgent agent;
     private Animator animator;
@@ -24,13 +26,15 @@ public class EnemyController : MonoBehaviour
 
     private float _speed;
     private bool _isAttacking = false;
+    private bool _isAlive = true;
 
+    private Rigidbody _rb;
     // Stamina system variables
-    public float stamina = 100f; // Initial stamina
-    public float maxStamina = 100f; // Maximum stamina
-    public float staminaRecoveryRate = 10f; // Stamina recovery per second
-    public float attackStaminaCost = 20f; // Stamina cost per attack
-    public float attackCooldown = 2f; // Cooldown time after an attack in seconds
+    [SerializeField] private float stamina; // Initial stamina
+    [SerializeField] private float maxStamina; // Maximum stamina
+    [SerializeField] private float staminaRecoveryRate; // Stamina recovery per second
+    [SerializeField] private float attackStaminaCost; // Stamina cost per attack
+    [SerializeField] private float attackCooldown; // Cooldown time after an attack in seconds
 
     private bool canAttack = true; // Determines if the enemy can attack
 
@@ -38,18 +42,30 @@ public class EnemyController : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
+        _rb = GetComponent<Rigidbody>();
 
         _speedID = Animator.StringToHash("Speed");
         _attackID = Animator.StringToHash("Attack");
-    }
+        _hurtID = Animator.StringToHash("Hurt");
+        _deathID = Animator.StringToHash("Death");
 
-    void Start()
-    {
-        // Initialize any needed setup here
+        runningDistance = GetRunningDistance();
+        attackDistance = GetAttackDistance();
+        triggerDistance = GetTriggerDistance();
+        walkingSpeed = GetWalkingSpeed();
+        stamina = GetStamina();
+        maxStamina = GetMaxStamina();
+        staminaRecoveryRate = GetStaminaRecoveryRate();
+        attackStaminaCost = GetStaminaCost();
+        attackCooldown = GetAttackCooldown();
+
+        health = GetHealth();
     }
 
     private void HeadForDestination()
     {
+        if (!_isAlive) return;  // Prevents any further actions if dead
+
         Vector3 destination = target.transform.position;
         float distance = Vector3.Distance(agent.transform.position, destination);
         _speed = walkingSpeed;
@@ -89,16 +105,14 @@ public class EnemyController : MonoBehaviour
     {
         if (stamina >= attackStaminaCost)
         {
-            // Perform attack
-            stamina -= attackStaminaCost; // Deduct stamina
+            stamina -= attackStaminaCost;
             animator.SetFloat(_speedID, 0f);
             _isAttacking = true;
-            canAttack = false; // Set cooldown for next attack
+            canAttack = false;
             StartCoroutine(AttackCooldown());
         }
         else
         {
-            // Not enough stamina to attack
             _isAttacking = false;
         }
     }
@@ -111,16 +125,56 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-        HeadForDestination();
-        animator.SetBool(_attackID, _isAttacking);
-
-        // Recover stamina over time
-        if (stamina < maxStamina)
+        if (_isAlive)
         {
-            stamina += staminaRecoveryRate * Time.deltaTime;
+            HeadForDestination();
+            animator.SetBool(_attackID, _isAttacking);
+            if (stamina < maxStamina)
+            {
+                stamina += staminaRecoveryRate * Time.deltaTime;
+            }
+            stamina = Mathf.Clamp(stamina, 0, maxStamina);
         }
-
-        // Ensure stamina does not exceed maxStamina
-        stamina = Mathf.Clamp(stamina, 0, maxStamina);
     }
+
+    public void ReceiveDamage(int damage)
+    {
+        if (!_isAlive) return; // Prevent further damage after death
+
+        animator.SetTrigger(_hurtID);
+        health -= damage;
+        print("Enemy " + name + " received " + damage + " damage. Current health is " + health);
+        if (health < 1)
+        {
+            Die();
+        }
+    }
+
+    public void Die()
+    {
+        if (!_isAlive) return; // Prevents Die() from being called multiple times
+
+        _speed = 0;
+        _isAlive = false;
+
+        _rb.freezeRotation = true;
+        // Disable NavMeshAgent to stop all movement and rotation
+        agent.enabled = false;
+        agent.updatePosition = false;
+        agent.updateRotation = false;
+
+        animator.SetBool(_deathID, true);
+        print("Enemy died");
+    }
+
+    public abstract float GetRunningDistance();
+    public abstract float GetAttackDistance();
+    public abstract float GetTriggerDistance();
+    public abstract float GetWalkingSpeed();
+    public abstract float GetStamina();
+    public abstract float GetMaxStamina();
+    public abstract float GetStaminaRecoveryRate();
+    public abstract float GetStaminaCost();
+    public abstract float GetAttackCooldown();
+    public abstract int GetHealth();
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Sword : MonoBehaviour
 {
+    [SerializeField] private int _damage = 3;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,8 +19,9 @@ public class Sword : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if (other.CompareTag("Enemy"))
         {
+            other.gameObject.GetComponent<EnemyController>().ReceiveDamage(_damage);
             print("collided!");
 
         }

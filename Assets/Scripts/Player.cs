@@ -32,7 +32,7 @@ public class Player : MonoBehaviour
     private bool _isCrouching = false;
     private bool _isRunning = false;
     private bool _isJumping = false;
-
+    private bool _isAttacking = false;
     private bool _isGrounded = true;
 
     private int _speedID;
@@ -91,7 +91,7 @@ public class Player : MonoBehaviour
         }
 
         CheckGround();
-        
+        //swordPrefab.GetComponent<Collider>().enabled = _isAttacking;
         _animator.SetBool(_jumpID, _isJumping);
         //print(_animator.GetBool(_jumpID));
     }
@@ -108,7 +108,7 @@ public class Player : MonoBehaviour
 
 private void OnMove()
     {
-
+        _isAttacking = false;
         _rb.AddRelativeForce(new Vector3(_inputs.move.x, 0, _inputs.move.y) * _speed * Time.deltaTime);
         _animator.SetFloat(_speedID, _inputs.move.magnitude);
     }
@@ -128,6 +128,7 @@ private void OnMove()
     // Coroutine to handle the jump with a delay
     private void OnJump()
     {
+        _isAttacking = false;
         if (!_isJumping && _isGrounded)
         {
             StartCoroutine(JumpWithDelay());
@@ -157,7 +158,7 @@ private void OnMove()
 
     private void OnAttack()
     {
-        swordPrefab.SetActive(true);
+        _isAttacking = true;
 
         // Determine the current movement state
         if (_isRunning)
@@ -190,7 +191,7 @@ private void OnMove()
 
     private void OnStrongAttack()
     {
-        swordPrefab.SetActive(true);
+        _isAttacking = true;
 
         if (_isRunning)
         {
@@ -222,6 +223,7 @@ private void OnMove()
 
     private void OnCrouch()
     {
+        _isAttacking = false;
         if (!_isCrouching)
         {
             _isCrouching = true;
@@ -236,27 +238,11 @@ private void OnMove()
         }
         _animator.SetBool(_crouchID, _isCrouching);
     }
-    private void OnRun()
-    {
-        if (!_isCrouching)
-        {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                print("running");
-                _speed = _walkingSpeed * _runModificator;
-                _isRunning = true;
-            }
-            else if(Input.GetKeyUp(KeyCode.LeftShift)) {
-                print("walking again");
-                _speed = _walkingSpeed;
-                _isRunning = false;
-            }
-        }
-        _animator.SetBool(_runID, _isRunning);
-    }
+
 
     private void OnRunStart()
     {
+        _isAttacking = false;
         if (!_isCrouching)
         {
             print("running");
@@ -285,6 +271,15 @@ private void OnMove()
         print("took damage " + damage + "by " + weaponName);
     }
 
-    
+    public void EnableSwordCollider()
+    {
+        swordPrefab.GetComponent<Collider>().enabled = true;
+    }
+
+    public void DisableSwordCollider()
+    {
+        swordPrefab.GetComponent<Collider>().enabled = false;
+    }
+
 
 }
