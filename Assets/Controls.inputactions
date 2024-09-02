@@ -349,7 +349,7 @@
                     "name": "",
                     "id": "6ab1f4c5-8e6d-4997-b390-28bd4b8aa903",
                     "path": "<Mouse>/rightButton",
-                    "interactions": "Press(behavior=2)",
+                    "interactions": "",
                     "processors": "",
                     "groups": "Mouse and keyboard",
                     "action": "StrongAttack",

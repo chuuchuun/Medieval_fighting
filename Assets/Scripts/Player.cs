@@ -32,8 +32,8 @@ public class Player : MonoBehaviour
     private bool _isCrouching = false;
     private bool _isRunning = false;
     private bool _isJumping = false;
-    private bool _isAttacking = false;
     private bool _isGrounded = true;
+    private bool _isAttacking;
 
     private int _speedID;
     private int _strongAttackID;
@@ -80,10 +80,10 @@ public class Player : MonoBehaviour
         OnLook();
         //OnRun();
 
-        if (_animator.GetBool(_strongAttackID) && !_inputs.strongAttack)
-        {
-            _animator.SetBool(_strongAttackID, false);
-        }
+        //if (_animator.GetBool(_strongAttackID) && !_inputs.strongAttack)
+        //{
+          //  _animator.SetBool(_strongAttackID, false);
+        //}
 
         if (_animator.GetBool(_attackID) && !_inputs.attack)
         {
@@ -108,7 +108,7 @@ public class Player : MonoBehaviour
 
 private void OnMove()
     {
-        _isAttacking = false;
+        //_isAttacking = false;
         _rb.AddRelativeForce(new Vector3(_inputs.move.x, 0, _inputs.move.y) * _speed * Time.deltaTime);
         _animator.SetFloat(_speedID, _inputs.move.magnitude);
     }
@@ -128,7 +128,7 @@ private void OnMove()
     // Coroutine to handle the jump with a delay
     private void OnJump()
     {
-        _isAttacking = false;
+        //_isAttacking = false;
         if (!_isJumping && _isGrounded)
         {
             StartCoroutine(JumpWithDelay());
@@ -158,7 +158,7 @@ private void OnMove()
 
     private void OnAttack()
     {
-        _isAttacking = true;
+        //_isAttacking = true;
 
         // Determine the current movement state
         if (_isRunning)
@@ -191,12 +191,16 @@ private void OnMove()
 
     private void OnStrongAttack()
     {
-        _isAttacking = true;
+        //
+        if (!_isAttacking)
+        {
+            _isAttacking = true;
+            _animator.SetTrigger(_strongAttackID);
+        }
 
         if (_isRunning)
         {
             // Set the animator for a running strong attack animation
-            _animator.SetBool(_strongAttackID, true);
             _animator.SetBool(_runID, true);
             _animator.SetFloat(_speedID, _inputs.move.magnitude); // Set speed to a higher value to trigger running animations
             Debug.Log("Running Strong Attack");
@@ -204,7 +208,6 @@ private void OnMove()
         else if (_inputs.move.magnitude > 0) // Check if player is walking
         {
             // Set the animator for a walking strong attack animation
-            _animator.SetBool(_strongAttackID, true);
             _animator.SetBool(_runID, false);
             _animator.SetFloat(_speedID, _inputs.move.magnitude); // Set speed to a lower value to trigger walking animations
             Debug.Log("Walking Strong Attack");
@@ -212,7 +215,6 @@ private void OnMove()
         else
         {
             // Set the animator for an idle strong attack animation
-            _animator.SetBool(_strongAttackID, true);
             _animator.SetBool(_runID, false);
             _animator.SetFloat(_speedID, 0); // Set speed to 0 to trigger idle animations
             Debug.Log("Idle Strong Attack");
@@ -223,7 +225,7 @@ private void OnMove()
 
     private void OnCrouch()
     {
-        _isAttacking = false;
+        //_isAttacking = false;
         if (!_isCrouching)
         {
             _isCrouching = true;
@@ -242,7 +244,7 @@ private void OnMove()
 
     private void OnRunStart()
     {
-        _isAttacking = false;
+        //_isAttacking = false;
         if (!_isCrouching)
         {
             print("running");
@@ -274,12 +276,18 @@ private void OnMove()
     public void EnableSwordCollider()
     {
         swordPrefab.GetComponent<Collider>().enabled = true;
+        print("enabled");
     }
 
     public void DisableSwordCollider()
     {
+        print("disabled");
         swordPrefab.GetComponent<Collider>().enabled = false;
     }
 
-
+    public void ResetAttack()
+    {
+        _isAttacking = false;
+        print("reset");
+    }
 }
