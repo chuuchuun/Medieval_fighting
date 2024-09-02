@@ -8,7 +8,7 @@ public class EnemyController : MonoBehaviour
     public GameObject target;
 
     public float runningDistance = 10.0f;
-    public float attackDistance = 0.5f;
+    public float attackDistance = 2f;
     public float triggerDistance = 20.0f;
 
     public float walkingSpeed = 2f;
@@ -24,6 +24,7 @@ public class EnemyController : MonoBehaviour
     private int _deathID;
 
     private float _speed;
+    private bool _isAttacking = false;
     
     // Start is called before the first frame update
 
@@ -33,7 +34,7 @@ public class EnemyController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
 
         _speedID = Animator.StringToHash("Speed");
-
+        _attackID = Animator.StringToHash("Attack");
 
     }
     void Start()
@@ -65,7 +66,8 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            animator.SetFloat(_speedID, 0f); 
+            animator.SetFloat(_speedID, 0f);
+            _isAttacking = false;
         }
         
     }
@@ -74,17 +76,19 @@ public class EnemyController : MonoBehaviour
     {
         animator.SetFloat(_speedID, 1);
         _speed = walkingSpeed * _runningModificator;
+        _isAttacking = false;
     }
 
     private void Attack()
     {
-        _speed = walkingSpeed;
-        //print("attack!");
+        animator.SetFloat(_speedID, 0f);
+        _isAttacking = true;
     }
     // Update is called once per frame
     void Update()
     {
         HeadForDestination();
+        animator.SetBool(_attackID, _isAttacking);
 
     }
 }
